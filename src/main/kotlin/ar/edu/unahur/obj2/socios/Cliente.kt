@@ -1,69 +1,54 @@
 package ar.edu.unahur.obj2.socios
+import kotlin.properties.Delegates
 
-
-
-class Cliente(val plataEnElBolsillo:Int) : EstadoDeAnimo, Barrio {
-    //val interfazAnimo = EstadoDeAnimo
-
-    fun cuantaPropinaDejaria(costoPedido : Int) {
-        //EstadoDeAnimo.accionQueRealiza()
-    }
-
-}
-
-
-interface EstadoDeAnimo {
-    fun accionQueRealiza()
-}
-
-object Enojado : EstadoDeAnimo {
-    override fun accionQueRealiza() = println ("no deja nada")
-}
-
-object EstaFeliz : EstadoDeAnimo{
-    override fun accionQueRealiza() {
-
-    }
-}
-object Indiferente : EstadoDeAnimo{
-    override fun accionQueRealiza() {
-
-    }
-}
-object Resfriado : EstadoDeAnimo{
-    override fun accionQueRealiza() {
-
+class Cliente(var estadoDeAnimo : EstadoDeAnimo , var barrio: Barrio, var plataEnElBolsillo: Int )  {
+    fun cuantaPropinaDejaria(costoPedido : Int): Int {
+        var propina = estadoDeAnimo.influyeEnLaPropina(this, costoPedido)
+        propina = barrio.efectoSobreLaPropina(propina)
+        return propina
     }
 }
 
-
-interface Barrio {
-    abstract fun efectoSobreLaPropina()
+abstract class EstadoDeAnimo() {
+    abstract fun influyeEnLaPropina(cliente: Cliente, costoDePedido : Int) : Int
 }
 
-object LasRosas : Barrio{
-    override fun efectoSobreLaPropina() {
-        TODO("Not yet implemented")
-    }
+object Enojado : EstadoDeAnimo() {
+    override fun influyeEnLaPropina(cliente:Cliente, costoDePedido: Int) = 0
+}
+object EstaFeliz : EstadoDeAnimo() {
+    override fun influyeEnLaPropina(cliente :Cliente, costoDePedido: Int) = (costoDePedido * 25/100)
+}
+object Indiferente : EstadoDeAnimo(){
+    override fun influyeEnLaPropina(cliente : Cliente , costoDePedido : Int) = cliente.plataEnElBolsillo
 }
 
-object LasLauchas : Barrio{
-    override fun efectoSobreLaPropina() {
-        TODO("Not yet implemented")
-    }
+object Resfriado : EstadoDeAnimo(){
+    override fun influyeEnLaPropina(cliente : Cliente, costoDePedido : Int) = costoDePedido
 }
 
-object BarrioVerde : Barrio{
-    override fun efectoSobreLaPropina() {
-        TODO("Not yet implemented")
-    }
+
+abstract class Barrio() {
+    abstract fun efectoSobreLaPropina(propinaSegunEstado : Int) : Int
 }
 
-object LasTorres : Barrio{
-    override fun efectoSobreLaPropina() {
-        TODO("Not yet implemented")
-    }
+object LasRosas : Barrio(){
+    override fun efectoSobreLaPropina(propinaSegunEstado : Int) =  propinaSegunEstado + 50
 }
+
+object LasLauchas : Barrio(){
+    override fun efectoSobreLaPropina(propinaSegunEstado : Int) = propinaSegunEstado / 2
+}
+
+object BarrioVerde : Barrio(){
+    override fun efectoSobreLaPropina(propinaSegunEstado : Int) =
+        if (propinaSegunEstado <= 200) 200 else propinaSegunEstado
+}
+
+object LasTorres : Barrio(){
+    override fun efectoSobreLaPropina(propinaSegunEstado : Int) = propinaSegunEstado
+}
+
 
 
 
